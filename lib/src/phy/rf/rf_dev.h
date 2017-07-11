@@ -47,13 +47,13 @@ typedef struct {
   double (*srslte_rf_set_tx_gain)(void *h, double gain);
   double (*srslte_rf_get_rx_gain)(void *h);
   double (*srslte_rf_get_tx_gain)(void *h);
-  double (*srslte_rf_set_rx_freq)(void *h, double freq);  
+  double (*srslte_rf_set_rx_freq)(void *h, double freq);
   double (*srslte_rf_set_tx_srate)(void *h, double freq);
   double (*srslte_rf_set_tx_freq)(void *h, double freq);
-  void   (*srslte_rf_get_time)(void *h, time_t *secs, double *frac_secs);  
-  int    (*srslte_rf_recv_with_time)(void *h, void *data, uint32_t nsamples, 
+  void   (*srslte_rf_get_time)(void *h, time_t *secs, double *frac_secs);
+  int    (*srslte_rf_recv_with_time)(void *h, void *data, uint32_t nsamples,
                            bool blocking, time_t *secs,double *frac_secs);
-  int    (*srslte_rf_recv_with_time_multi)(void *h, void **data, uint32_t nsamples, 
+  int    (*srslte_rf_recv_with_time_multi)(void *h, void **data, uint32_t nsamples,
                            bool blocking, time_t *secs,double *frac_secs);
   int    (*srslte_rf_send_timed)(void *h, void *data, int nsamples,
                      time_t secs, double frac_secs, bool has_time_spec,
@@ -62,7 +62,7 @@ typedef struct {
 
   void   (*srslte_rf_set_rx_cal)(void *h, srslte_rf_cal_t *cal);
 
-} rf_dev_t; 
+} rf_dev_t;
 
 /* Define implementation for UHD */
 #ifdef ENABLE_UHD
@@ -70,7 +70,7 @@ typedef struct {
 #include "rf_uhd_imp.h"
 
 static rf_dev_t dev_uhd = {
-  "UHD", 
+  "UHD",
   rf_uhd_devname,
   rf_uhd_rx_wait_lo_locked,
   rf_uhd_start_rx_stream,
@@ -90,10 +90,10 @@ static rf_dev_t dev_uhd = {
   rf_uhd_set_tx_gain,
   rf_uhd_get_rx_gain,
   rf_uhd_get_tx_gain,
-  rf_uhd_set_rx_freq, 
+  rf_uhd_set_rx_freq,
   rf_uhd_set_tx_srate,
   rf_uhd_set_tx_freq,
-  rf_uhd_get_time,  
+  rf_uhd_get_time,
   rf_uhd_recv_with_time,
   rf_uhd_recv_with_time_multi,
   rf_uhd_send_timed,
@@ -108,7 +108,7 @@ static rf_dev_t dev_uhd = {
 #include "rf_blade_imp.h"
 
 static rf_dev_t dev_blade = {
-  "bladeRF", 
+  "bladeRF",
   rf_blade_devname,
   rf_blade_rx_wait_lo_locked,
   rf_blade_start_rx_stream,
@@ -128,10 +128,10 @@ static rf_dev_t dev_blade = {
   rf_blade_set_tx_gain,
   rf_blade_get_rx_gain,
   rf_blade_get_tx_gain,
-  rf_blade_set_rx_freq, 
+  rf_blade_set_rx_freq,
   rf_blade_set_tx_srate,
   rf_blade_set_tx_freq,
-  rf_blade_get_time,  
+  rf_blade_get_time,
   rf_blade_recv_with_time,
   rf_blade_recv_with_time_multi,
   rf_blade_send_timed,
@@ -178,19 +178,57 @@ static rf_dev_t dev_soapy = {
 
 #endif
 
+#ifdef ENABLE_LIMESDR
+
+#include "rf_lime_imp.h"
+
+static rf_dev_t dev_lime = {
+  "lime",
+  rf_lime_devname,
+  rf_lime_rx_wait_lo_locked,
+  rf_lime_start_rx_stream,
+  rf_lime_stop_rx_stream,
+  rf_lime_flush_buffer,
+  rf_lime_has_rssi,
+  rf_lime_get_rssi,
+  rf_lime_suppress_stdout,
+  rf_lime_register_error_handler,
+  rf_lime_open,
+  rf_lime_open_multi,
+  rf_lime_close,
+  rf_lime_set_master_clock_rate,
+  rf_lime_is_master_clock_dynamic,
+  rf_lime_set_rx_srate,
+  rf_lime_set_rx_gain,
+  rf_lime_set_tx_gain,
+  rf_lime_get_rx_gain,
+  rf_lime_get_tx_gain,
+  rf_lime_set_rx_freq,
+  rf_lime_set_tx_srate,
+  rf_lime_set_tx_freq,
+  rf_lime_get_time,
+  rf_lime_recv_with_time,
+  rf_lime_recv_with_time_multi,
+  rf_lime_send_timed,
+  rf_lime_set_tx_cal,
+  rf_lime_set_rx_cal
+};
+
+#endif
+
 //#define ENABLE_DUMMY_DEV
 
 #ifdef ENABLE_DUMMY_DEV
 int dummy_rcv() {
   usleep(100000);
-  return 1; 
+  return 1;
 }
 void dummy_fnc() {
-  
+
 }
 
 static rf_dev_t dev_dummy = {
-  "dummy", 
+  "dummy",
   dummy_fnc,
   dummy_fnc,
   dummy_fnc,
@@ -209,10 +247,10 @@ static rf_dev_t dev_dummy = {
   dummy_fnc,
   dummy_fnc,
   dummy_fnc,
-  dummy_fnc, 
   dummy_fnc,
   dummy_fnc,
-  dummy_fnc,  
+  dummy_fnc,
+  dummy_fnc,
   dummy_rcv,
   dummy_fnc,
   dummy_fnc,
@@ -223,13 +261,16 @@ static rf_dev_t dev_dummy = {
 static rf_dev_t *available_devices[] = {
 
 #ifdef ENABLE_UHD
-  &dev_uhd, 
+  &dev_uhd,
 #endif
 #ifdef ENABLE_SOAPYSDR
   &dev_soapy,
 #endif
 #ifdef ENABLE_BLADERF
-  &dev_blade,  
+  &dev_blade,
+#endif
+#ifdef ENABLE_LIMESDR
+  &dev_lime,
 #endif
 #ifdef ENABLE_DUMMY_DEV
   &dev_dummy,

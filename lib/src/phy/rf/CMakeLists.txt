@@ -20,7 +20,7 @@
 
 if(RF_FOUND)
 
-  # This library is only used by the examples 
+  # This library is only used by the examples
   add_library(srslte_rf_utils STATIC rf_utils.c)
   target_link_libraries(srslte_rf_utils srslte_phy)
 
@@ -43,10 +43,14 @@ if(RF_FOUND)
     list(APPEND SOURCES_RF rf_soapy_imp.c)
   endif (SOAPYSDR_FOUND)
 
+  if (LIMESDR_FOUND)
+    add_definitions(-DENABLE_LIMESDR)
+    list(APPEND SOURCES_RF rf_lime_imp.c)
+  endif (LIMESDR_FOUND)
 
   add_library(srslte_rf SHARED ${SOURCES_RF})
   target_link_libraries(srslte_rf srslte_rf_utils srslte_phy)
-  
+
   if (UHD_FOUND)
     target_link_libraries(srslte_rf ${UHD_LIBRARIES})
   endif (UHD_FOUND)
@@ -59,6 +63,9 @@ if(RF_FOUND)
     target_link_libraries(srslte_rf ${SOAPYSDR_LIBRARIES})
   endif (SOAPYSDR_FOUND)
 
+  if (LIMESDR_FOUND)
+    target_link_libraries(srslte_rf ${LIMESDR_LIBRARIES})
+  endif (LIME_FOUND)
 
   INSTALL(TARGETS srslte_rf DESTINATION ${LIBRARY_DIR})
 endif(RF_FOUND)
