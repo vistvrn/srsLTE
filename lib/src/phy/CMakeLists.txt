@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2017 Software Radio Systems Limited
+# Copyright 2013-2020 Software Radio Systems Limited
 #
 # This file is part of srsLTE
 #
@@ -10,7 +10,7 @@
 #
 # srsLTE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Affero General Public License for more details.
 #
 # A copy of the GNU Affero General Public License can be found in
@@ -35,56 +35,23 @@ add_subdirectory(resampling)
 add_subdirectory(scrambling)
 add_subdirectory(ue)
 add_subdirectory(enb)
-
 set(srslte_srcs     $<TARGET_OBJECTS:srslte_agc>
-                    $<TARGET_OBJECTS:srslte_ch_estimation>
-                    $<TARGET_OBJECTS:srslte_phy_common>
-                    $<TARGET_OBJECTS:srslte_fec>
-                    $<TARGET_OBJECTS:srslte_mimo>
-                    $<TARGET_OBJECTS:srslte_phch>
-                    $<TARGET_OBJECTS:srslte_sync>
-                    $<TARGET_OBJECTS:srslte_utils>
-                    $<TARGET_OBJECTS:srslte_channel>
-                    $<TARGET_OBJECTS:srslte_dft>
-                    $<TARGET_OBJECTS:srslte_io>
-                    $<TARGET_OBJECTS:srslte_modem>
-                    $<TARGET_OBJECTS:srslte_resampling>
-                    $<TARGET_OBJECTS:srslte_scrambling>
-                    $<TARGET_OBJECTS:srslte_ue>
-                    $<TARGET_OBJECTS:srslte_enb>
-)
+        $<TARGET_OBJECTS:srslte_ch_estimation>
+        $<TARGET_OBJECTS:srslte_phy_common>
+        $<TARGET_OBJECTS:srslte_fec>
+        $<TARGET_OBJECTS:srslte_mimo>
+        $<TARGET_OBJECTS:srslte_phch>
+        $<TARGET_OBJECTS:srslte_sync>
+        $<TARGET_OBJECTS:srslte_utils>
+        $<TARGET_OBJECTS:srslte_channel>
+        $<TARGET_OBJECTS:srslte_dft>
+        $<TARGET_OBJECTS:srslte_io>
+        $<TARGET_OBJECTS:srslte_modem>
+        $<TARGET_OBJECTS:srslte_resampling>
+        $<TARGET_OBJECTS:srslte_scrambling>
+        $<TARGET_OBJECTS:srslte_ue>
+        $<TARGET_OBJECTS:srslte_enb>
+        )
 
 add_library(srslte_phy STATIC ${srslte_srcs})
-set_target_properties(srslte_phy PROPERTIES
-                                 VERSION ${SRSLTE_VERSION_MAJOR}.${SRSLTE_VERSION_MINOR})
-
-find_package(MKL)
-if(MKL_FOUND)
-  include_directories(${MKL_INCLUDE_DIRS})
-  link_directories(${MKL_LIBRARY_DIRS})
-else(MKL_FOUND)
-  find_package(FFTW3F REQUIRED)
-  if(FFTW3F_FOUND)
-    include_directories(${FFTW3F_INCLUDE_DIRS})
-    link_directories(${FFTW3F_LIBRARY_DIRS})
-  endif(FFTW3F_FOUND)
-endif(MKL_FOUND)
-
-
-if(MKL_FOUND)
-  if(STATIC_MKL)
-    target_link_libraries(srslte_phy ${MKL_STATIC_LIBRARIES})
-  else(STATIC_MKL)
-    target_link_libraries(srslte_phy ${MKL_LIBRARIES})
-  endif(STATIC_MKL)
-else(MKL_FOUND)
-  target_link_libraries(srslte_phy ${FFTW3F_LIBRARIES})
-endif(MKL_FOUND)
-
-
-if(VOLK_FOUND)
-  target_link_libraries(srslte_phy ${VOLK_LIBRARIES})
-endif(VOLK_FOUND)
-
-target_link_libraries(srslte_phy pthread m)
-install(TARGETS srslte_phy DESTINATION ${LIBRARY_DIR})
+target_link_libraries(srslte_phy pthread m ${FFT_LIBRARIES})

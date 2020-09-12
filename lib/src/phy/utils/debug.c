@@ -1,12 +1,7 @@
-/**
+/*
+ * Copyright 2013-2020 Software Radio Systems Limited
  *
- * \section COPYRIGHT
- *
- * Copyright 2013-2015 Software Radio Systems Limited
- *
- * \section LICENSE
- *
- * This file is part of the srsLTE library.
+ * This file is part of srsLTE.
  *
  * srsLTE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,12 +20,15 @@
  */
 
 #include "srslte/phy/utils/debug.h"
+#include <stdlib.h>
 
-int srslte_verbose = 0;
+int srslte_verbose     = 0;
+int handler_registered = 0;
 
-void get_time_interval(struct timeval * tdata) {
+void get_time_interval(struct timeval* tdata)
+{
 
-  tdata[0].tv_sec = tdata[2].tv_sec - tdata[1].tv_sec;
+  tdata[0].tv_sec  = tdata[2].tv_sec - tdata[1].tv_sec;
   tdata[0].tv_usec = tdata[2].tv_usec - tdata[1].tv_usec;
   if (tdata[0].tv_usec < 0) {
     tdata[0].tv_sec--;
